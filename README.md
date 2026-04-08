@@ -1,200 +1,64 @@
-# Mastery_Project
-Customer segmentation and reward strategy using TravelTide dataset
+TravelTide Customer Segmentation & Perk Assignment
+Mastery Project — Masterschool of Technology
+Author: Armin Kajevic, M.Sc.
 
+Project Overview
+TravelTide, an e-booking startup, faces a critical retention challenge: users book once and do not return. The objective of this project is to design and implement a personalized rewards program that assigns each customer the perk they are most likely to value, thereby driving long-term retention.
 
+This repository contains the complete end-to-end analytical pipeline, from SQL data extraction and cleaning to Python-based feature engineering, K-Means clustering, and final perk assignment scoring.
 
-# **TravelTide Customer Segmentation Project**  
-*Mastery Project — SQL • Python • Feature Engineering • K‑Means Segmentation*
+Business Goal
+To assign one of five distinct perks to each eligible user based on their historical behavior:
+1	Free Checked Bag
+2	No Cancellation Fee
+3	Exclusive Discounts
+4	1 Night Free Hotel with Flight
+5	Free Hotel Meal
 
----
+Cohort Definition
+The analysis focuses on a specific cohort of users to ensure sufficient behavioral history:
+•	Minimum 8 sessions per user.
+•	Recent activity: Sessions occurring from January 5, 2023 onward.
 
-##  Project Overview
+Repository Structure
+├── TravelTide_Segmentation.ipynb   # Main Jupyter Notebook containing all Python analysis
+├── README.md                       # Project documentation
+(Note: The raw CSV data files and SQL extraction scripts are maintained separately in the database environment and are not included in this public repository for privacy reasons.)
 
-This repository contains an end‑to‑end analytics project developed for the TravelTide Mastery Program. The goal is to analyze customer behavior, engineer meaningful features, segment users into actionable groups, and assign each customer a personalized reward perk to support TravelTide’s retention strategy.
+Methodology
+1. Data Extraction & Cleaning (SQL & Python)
+The foundation of the analysis is built on four core tables (users, sessions, flights, hotels) joined at the session level. Data cleaning steps included:
+•	Converting boolean columns to integers for modeling.
+•	Computing session duration and handling anomalies (e.g., clipping negative durations).
+•	Correcting invalid hotel nights using check-in and check-out timestamps.
+•	Applying IQR winsorization to handle extreme outliers in numerical fields.
 
-The project integrates:
+2. Feature Engineering
+Raw session data was aggregated to the user level to create eight behavioral metrics that capture what drives perk preference:
+•	booking_rate: How often sessions convert into bookings.
+•	cancellation_rate: Affinity for flexibility and cancellation protection.
+•	discount_attention_index: Discount exposure and responsiveness.
+•	travel_intensity_index: How frequently the user travels relative to tenure.
+•	bags_per_seat_avg: Luggage behavior, acting as a proxy for Free Checked Bag affinity.
+•	hotel_booking_share: Hotel-heavy versus flight-heavy user preference.
+•	bundle_booking_index: Tendency to book complete travel packages.
 
-- SQL data extraction and cleaning  
-- Python‑based feature engineering  
-- K‑Means clustering  
-- Behavioral interpretation  
-- Business recommendations  
-- Executive‑level communication  
+3. Exploratory Clustering
+K-Means clustering was applied to the scaled behavioral metrics. Both the Elbow Method and Silhouette Score indicated that k=2 provided the best mathematical separation of users, revealing two broad behavioral groups:
+•	Cluster 0 (Stable Travellers): Higher booking rates, strong preference for hotels, and a tendency to book flight+hotel bundles.
+•	Cluster 1 (Active Explorers): Higher cancellation rates, highly responsive to discounts, and more page clicks per session.
 
----
+4. Perk Affinity Scoring
+While k=2 is statistically optimal, it is insufficient to effectively assign five distinct perks. Therefore, a granular scoring approach was implemented. Each user received an affinity score for each of the five perks based on a weighted combination of their behavioral metrics. The perk with the highest score was assigned to the user.
 
-##  Business Objective
+Key Findings & Recommendations
+•	Data-Driven Assignment: The affinity scoring model successfully distributed the five perks across the cohort, ensuring that each user received a relevant reward based on their specific behavior.
+•	Next Steps: Launch an A/B test by rolling out the assigned perks to 80% of the cohort, keeping 20% as a control group to measure true incremental lift.
+•	KPIs to Monitor: Retention Rate, Perk Redemption Rate, and Incremental Revenue per User.
 
-TravelTide aims to improve **customer retention** by launching a personalized rewards program.  
-To support this initiative, the analytics team must:
-
-- understand how customers behave  
-- identify natural behavioral segments  
-- assign the most relevant perk to each user  
-- provide insights that marketing can directly apply in campaigns  
-
-This project delivers exactly that.
-
----
-
-##  Repository Structure
-
-```
-traveltide-segmentation/
-│
-├── data/
-│   ├── session_level_clean.csv
-│   ├── user_level_aggregate.csv
-│   ├── clusters_with_perks.csv
-│   └── cluster_summary.csv
-│
-├── notebooks/
-│   └── final_notebook.ipynb
-│
-├── sql/
-│   └── week1_data_prep.sql
-│
-├── reports/
-│   ├── executive_summary.pdf
-│   ├── week1_report.pdf
-│   ├── week2_3_report.pdf
-│   └── final_report.pdf
-│
-├── slides/
-│   └── presentation.pptx
-│
-└── README.md
-```
-
----
-
-##  Workflow Summary (Week 1–4)
-
-### **Week 1 — SQL Exploration & Data Preparation**
-- Defined cohort (8+ sessions, from 2023‑01‑05 onward)  
-- Cleaned session‑level data  
-- Resolved anomalies (e.g., invalid hotel nights)  
-- Created session‑level and user‑level analytical tables  
-
-### **Week 2 — Feature Engineering**
-Engineered behavioral metrics including:
-
-- `booking_rate`  
-- `cancellation_rate`  
-- `discount_attention_index`  
-- `travel_intensity_index`  
-- `sessions_booking_rate`  
-- `bags_per_seat_avg`  
-- `avg_session_minutes`  
-- `total_bookings`
-
-### **Week 3 — Customer Segmentation**
-- StandardScaler applied to all features  
-- K‑Means clustering (k = 2)  
-- Silhouette analysis  
-- Cluster interpretation  
-- Perk assignment logic  
-
-### **Week 4 — Communication & Reporting**
-- Visualizations (bar chart, heatmap, radar chart, scatter plot)  
-- Executive summary  
-- Final report  
-- Presentation deck  
-
----
-
-##  Feature Engineering Highlights
-
-The project focuses on creating metrics that capture:
-
-### **Engagement**
-- average session duration  
-- total sessions  
-- total clicks  
-
-### **Booking Behavior**
-- total bookings  
-- booking rate  
-- cancellation rate  
-
-### **Discount Sensitivity**
-- discount booking rate  
-- discount attention index  
-
-### **Travel Intensity**
-- travel intensity index  
-- bags per seat average  
-
-These features provide a compact and expressive representation of customer behavior.
-
----
-
-##  Segmentation Approach
-
-### **Model**
-- **K‑Means (k = 2)**  
-- StandardScaler for normalization  
-- Silhouette score used to validate separation  
-- Visual confirmation via scatter plot and radar chart  
-
-### **Cluster Profiles**
-
-| Cluster | Behavioral Profile | Recommended Perk |
-|--------|--------------------|------------------|
-| **0** | Low engagement, low travel intensity, low discount sensitivity | **Convenience perks** |
-| **1** | High engagement, high travel intensity, strong discount sensitivity | **Discount perks** |
-
----
-
-##  Visualizations Included
-
-- **Correlation Heatmap**  
-- **Bar Chart — Key Metrics by Cluster**  
-- **Radar Chart — Cluster Profiles**  
-- **Scatter Plot — Cluster Separation**  
-- **Elbow Method**  
-
-All visualizations are generated in `final_notebook.ipynb`.
-
----
-
-##  Perk Assignment Logic
-
-Based on behavioral interpretation:
-
-- **Cluster 0 → Convenience perks**  
-  (priority boarding, seat selection, smoother travel experience)
-
-- **Cluster 1 → Discount perks**  
-  (vouchers, hotel coupons, promotional offers)
-
----
-
-##  KPIs for Measuring Success
-
-To evaluate the rewards program:
-
-- repeat booking rate  
-- perk redemption rate  
-- revenue per active user  
-- cancellation behavior  
-- rewards enrollment rate  
-
----
-
-##  Deliverables
-
-- SQL extraction and cleaning workflow  
-- Python segmentation pipeline  
-- Engineered dataset  
-- Cluster assignments  
-- Executive summary  
-- Week‑by‑week reports  
-- Final presentation  
-
----
-
-##  Project Status
-
-The project is **fully completed** and ready for academic submission or integration into TravelTide’s marketing strategy.
+Contact
+For any questions regarding this analysis, please contact:
+•	Armin Kajevic, M.Sc.
+•	Email: armin.kajevic@outlook.de
+•	Phone: 01731885542
 
