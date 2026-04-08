@@ -21,6 +21,7 @@ The analysis focuses on a specific cohort of users to ensure sufficient behavior
 •	Recent activity: Sessions occurring from January 5, 2023 onward.
 
 Repository Structure
+
 ├── TravelTide_Segmentation.ipynb   # Main Jupyter Notebook containing all Python analysis
 ├── README.md                       # Project documentation
 (Note: The raw CSV data files and SQL extraction scripts are maintained separately in the database environment and are not included in this public repository for privacy reasons.)
