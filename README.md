@@ -1,6 +1,6 @@
 ### TravelTide Customer Segmentation & Perk Assignment
 
-# Mastery Project — Masterschool of Technology
+# Mastery Project - Masterschool of Technology
 
 # Author: Armin Kajevic, M.Sc.
 
